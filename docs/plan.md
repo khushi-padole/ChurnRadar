@@ -1,6 +1,6 @@
 # ChurnRadar — Product Plan
 
-> **Status**: Awaiting approval — no implementation has begun.
+> **Status**: ✅ Approved — all open questions answered. Implementation may begin.
 
 ---
 
@@ -124,7 +124,7 @@ These are stated explicitly so you can override them before implementation begin
 - [ ] Intervention form: Customer (auto-filled if on customer page), Type, Status (defaults to Planned), Notes (textarea, max 2000 chars), Scheduled Date.
 - [ ] Completed interventions require an Outcome field (textarea, max 1000 chars).
 - [ ] CSM can only edit/delete interventions they created. Managers and Admins can edit any.
-- [ ] Kanban board columns: Planned | In Progress | Completed | Cancelled. Drag-and-drop to change status (stretch; fallback: dropdown).
+- [ ] Kanban board columns: Planned | In Progress | Completed | Cancelled. Status changed via **dropdown per card** (no drag-and-drop in v1).
 
 ### AC: MGR-4 — CSM Leaderboard
 
@@ -546,38 +546,25 @@ d:/Sem5/ChurnRadar/
 
 ---
 
-## 7. Open Questions
+## 7. Decisions (Open Questions — Answered)
 
-> [!IMPORTANT]
-> **OQ1 — Email provider**: I've assumed **Resend**. Do you have a preference (SendGrid, Nodemailer/SMTP, Postmark)? Will you be supplying an API key, or should I use Nodemailer with a test SMTP (Mailtrap) so no real account is needed?
+| # | Question | Decision |
+|---|---|---|
+| OQ1 | Email provider | **Resend** free tier (3 k emails/month). `RESEND_API_KEY` stored in `.env.local` only — never committed. |
+| OQ2 | Supabase project | **Existing project** supplied. `DATABASE_URL` and `DIRECT_URL` stored in `.env.local`. Project URL: `https://dqklcdcwmdkejkoginin.supabase.co`. |
+| OQ3 | NextAuth secret | **Supplied by user.** Stored in `.env.local` as `AUTH_SECRET`. Placeholder added to `.env.example`. |
+| OQ4 | Kanban drag-and-drop | **Simple status dropdown per card.** No `@dnd-kit` in v1. |
+| OQ5 | Avatar upload | **URL input only.** User pastes an external image link. No Supabase Storage in v1. |
+| OQ6 | Password reset | **Full email flow.** Resend sends a token link → `/reset-password` page. |
+| OQ7 | Mobile responsiveness | **Fully responsive** with Tailwind breakpoints (mobile-first). |
+| OQ8 | Real-time notifications | **Polling every 30 s** via `setInterval` + SWR/fetch. No Supabase Realtime in v1. |
+| OQ9 | Churn score recalculation | **Synchronous** in the same API call that saves the usage log. |
+| OQ10 | Seed demo credentials | **Yes.** Demo admin: `admin@churnradar.com / Demo1234!` — documented in README. |
 
-> [!IMPORTANT]
-> **OQ2 — Supabase project**: Do you already have a Supabase project created? If yes, will you supply the `DATABASE_URL` and `DIRECT_URL` connection strings? If not, I'll write the setup instructions but won't be able to run migrations.
-
-> [!IMPORTANT]
-> **OQ3 — NextAuth secret**: `AUTH_SECRET` must be a 32-byte random string. Should I generate one and add it to `.env.example`, or will you supply it?
-
-> [!NOTE]
-> **OQ4 — Drag-and-drop on Kanban**: Should I implement `@dnd-kit` for drag-and-drop status changes on the interventions board, or is a simple status-dropdown per card sufficient for v1?
-
-> [!NOTE]
-> **OQ5 — Avatar upload**: Should profile avatars be uploaded to Supabase Storage, or just support a URL input (link to an external image)?
-
-> [!NOTE]
-> **OQ6 — Password reset**: Should "Forgot password" be a full email flow (Resend token link → reset page), or is it out of scope for v1 (admin resets via direct DB edit)?
-
-> [!NOTE]
-> **OQ7 — Mobile responsiveness**: Should the app be fully responsive (works on phones), or is desktop-first with a tablet breakpoint acceptable for a portfolio piece?
-
-> [!NOTE]
-> **OQ8 — Real-time notifications**: Should in-app notifications use polling (every 30 s), or should I wire up Supabase Realtime/SSE for live push?
-
-> [!NOTE]
-> **OQ9 — Churn score recalculation timing**: When a usage log is saved, should the score recalculate synchronously in the same API call (simple, slightly slower) or asynchronously via a background job (complex, faster UX)?
-
-> [!NOTE]
-> **OQ10 — Seed data demo users**: Should the seed script create a known demo account (e.g., `admin@churnradar.com / Demo1234!`) that is documented in the README, for easy portfolio demo access?
+> [!CAUTION]
+> `RESEND_API_KEY`, `DATABASE_URL`, `DIRECT_URL`, and `AUTH_SECRET` are **never committed to git**.
+> They live exclusively in `.env.local` (git-ignored). Only `.env.example` (with placeholder values) is committed.
 
 ---
 
-*Awaiting your approval and answers to open questions before implementation begins.*
+*Plan approved. Implementation in progress.*
