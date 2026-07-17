@@ -4,8 +4,6 @@
 > **Status**: ✅ Approved — all open questions answered. Implementation may begin.
 
 
----
-
 ## Table of Contents
 
 1. [Assumptions](#1-assumptions)
@@ -362,7 +360,7 @@ interface ScoreWeightConfig {
 ## 5. Affected Files
 
 <<<<<<< HEAD
-Identical structure mapped to root directory: `d:/Sem5/ChurnBhau`.
+Identical structure mapped to root directory: `d:/Sem5/ChurnRadar`.
 =======
 ```
 d:/Sem5/ChurnRadar/
@@ -509,9 +507,9 @@ Refer to original product plan.
 
 ## 7. Open Questions (Resolved)
 
-1. **OQ1 — Email provider**: Resend API key: `re_WLezRAf7_3FqncFroT7kytkj3nGUJcYKL`
-2. **OQ2 — Supabase project**: Direct URL: `postgresql://postgres:[KhushiYP@0908]@db.dqklcdcwmdkejkoginin.supabase.co:5432/postgres` (Note: Brackets around password will be removed/escaped).
-3. **OQ3 — NextAuth secret**: `AUTH_SECRET=4EiGEPO9wnGkIjrXnIYoFzKpjt/cols8JhLVtLT+NuA=`
+1. **OQ1 — Email provider**: Resend API key: `YOUR_KEY_HERE`
+2. **OQ2 — Supabase project**: Direct URL: `YOUR_KEY_HERE` (Note: Brackets around password will be removed/escaped).
+3. **OQ3 — NextAuth secret**: `YOUR_KEY_HERE`
 4. **OQ4 — Drag-and-drop on Kanban**: Simple dropdown per card (no @dnd-kit).
 5. **OQ5 — Avatar upload**: URL input only.
 6. **OQ6 — Password reset**: Full email flow with Resend.
@@ -579,7 +577,7 @@ Refer to original product plan.
 | # | Question | Decision |
 |---|---|---|
 | OQ1 | Email provider | **Resend** free tier (3 k emails/month). `RESEND_API_KEY` stored in `.env.local` only — never committed. |
-| OQ2 | Supabase project | **Existing project** supplied. `DATABASE_URL` and `DIRECT_URL` stored in `.env.local`. Project URL: `https://dqklcdcwmdkejkoginin.supabase.co`. |
+| OQ2 | Supabase project | **Existing project** supplied. `DATABASE_URL` and `DIRECT_URL` stored in `.env.local`. Project URL: `YOUR_KEY_HERE`. |
 | OQ3 | NextAuth secret | **Supplied by user.** Stored in `.env.local` as `AUTH_SECRET`. Placeholder added to `.env.example`. |
 | OQ4 | Kanban drag-and-drop | **Simple status dropdown per card.** No `@dnd-kit` in v1. |
 | OQ5 | Avatar upload | **URL input only.** User pastes an external image link. No Supabase Storage in v1. |
