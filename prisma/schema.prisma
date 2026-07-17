@@ -1,0 +1,244 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  CSM
+  MANAGER
+  ADMIN
+}
+
+enum Industry {
+  SAAS
+  ECOMMERCE
+  FINTECH
+  HEALTHCARE
+  RETAIL
+  OTHER
+}
+
+enum Tier {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum ChurnRisk {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum CustomerStatus {
+  ACTIVE
+  CHURNED
+  PAUSED
+}
+
+enum InterventionType {
+  EMAIL
+  CALL
+  MEETING
+  DISCOUNT
+  TRAINING
+  OTHER
+}
+
+enum InterventionStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  RISK_ESCALATION
+  INTERVENTION_DUE
+  SYSTEM
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum TokenType {
+  VERIFICATION
+  PASSWORD_RESET
+  USER_INVITE
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String
+  passwordHash  String
+  role          Role      @default(CSM)
+  emailVerified DateTime?
+  avatarUrl     String?
+  isActive      Boolean   @default(true)
+  invitedById   String?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Self-relation for invites
+  invitedBy    User?  @relation("UserInvites", fields: [invitedById], references: [id])
+  invitedUsers User[] @relation("UserInvites")
+
+  // Relations to other entities
+  assignedCustomers   Customer[]          @relation("CSMAssignment")
+  createdCustomers    Customer[]          @relation("CustomerCreator")
+  usageLogs           UsageLog[]
+  interventions       Intervention[]
+  notifications       Notification[]
+  auditLogs           AuditLog[]
+  updatedScoreConfigs ScoreWeightConfig[]
+
+  @@index([email])
+}
+
+model Customer {
+  id            String         @id @default(uuid())
+  companyName   String
+  industry      Industry
+  tier          Tier
+  mrrCents      Int
+  contractStart DateTime
+  contractEnd   DateTime?
+  website       String?
+  logoUrl       String?
+  notes         String?        @db.Text
+  healthScore   Float          @default(50.0)
+  churnRisk     ChurnRisk      @default(HIGH)
+  status        CustomerStatus @default(ACTIVE)
+  assignedCsmId String?
+  createdById   String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime? // Soft delete timestamp
+
+  // Relations
+  assignedCsm   User?          @relation("CSMAssignment", fields: [assignedCsmId], references: [id])
+  creator       User           @relation("CustomerCreator", fields: [createdById], references: [id])
+  usageLogs     UsageLog[]
+  interventions Intervention[]
+  notifications Notification[]
+
+  @@index([assignedCsmId])
+  @@index([churnRisk])
+  @@index([status])
+  @@index([companyName])
+}
+
+model UsageLog {
+  id                     String   @id @default(uuid())
+  customerId             String
+  logDate                DateTime // Date part stored as midnight UTC
+  loginCount             Int      @default(0)
+  activeUsers            Int      @default(0)
+  apiCalls               Int      @default(0)
+  sessionDurationMinutes Float    @default(0.0)
+  featuresUsed           Json // Array of FeatureFlag strings
+  createdById            String
+  createdAt              DateTime @default(now())
+
+  // Relations
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  creator  User     @relation(fields: [createdById], references: [id])
+
+  @@unique([customerId, logDate])
+  @@index([logDate])
+}
+
+model Intervention {
+  id                String             @id @default(uuid())
+  customerId        String
+  createdById       String
+  type              InterventionType
+  status            InterventionStatus @default(PLANNED)
+  title             String
+  notes             String?            @db.Text
+  scheduledAt       DateTime?
+  completedAt       DateTime? // Set when status becomes COMPLETED
+  outcome           String?            @db.Text // Required when status is COMPLETED
+  healthScoreBefore Float?
+  healthScoreAfter  Float?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime? // Soft delete timestamp
+
+  // Relations
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  creator  User     @relation(fields: [createdById], references: [id])
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String
+  type       NotificationType
+  title      String
+  message    String
+  customerId String?
+  read       Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([read])
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  actorId    String
+  entityType String // "Customer" | "User" | "Intervention" etc.
+  entityId   String
+  action     AuditAction
+  diff       Json // Diff shape: Record<string, { before: any, after: any }>
+  ipAddress  String?
+  createdAt  DateTime    @default(now())
+
+  // Relations
+  actor User @relation(fields: [actorId], references: [id])
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+}
+
+model ScoreWeightConfig {
+  id                      String   @id @default("global")
+  loginFrequencyWeight    Float    @default(0.25)
+  featureBreadthWeight    Float    @default(0.20)
+  activeUserGrowthWeight  Float    @default(0.20)
+  apiEngagementWeight     Float    @default(0.15)
+  contractProximityWeight Float    @default(0.20)
+  updatedById             String
+  updatedAt               DateTime @updatedAt
+
+  // Relations
+  updater User @relation(fields: [updatedById], references: [id])
+}
+
+model Token {
+  id        String    @id @default(uuid())
+  email     String
+  token     String    @unique
+  expiresAt DateTime
+  type      TokenType
+  createdAt DateTime  @default(now())
+
+  @@index([token])
+}
