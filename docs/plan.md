@@ -1,6 +1,8 @@
-# ChurnBhau — Product Plan
 
-> **Status**: Awaiting approval — no implementation has begun.
+# ChurnRadar — Product Plan
+
+> **Status**: ✅ Approved — all open questions answered. Implementation may begin.
+
 
 ---
 
@@ -124,7 +126,11 @@ These are stated explicitly so you can override them before implementation begin
 - [ ] Intervention form: Customer (auto-filled if on customer page), Type, Status (defaults to Planned), Notes (textarea, max 2000 chars), Scheduled Date.
 - [ ] Completed interventions require an Outcome field (textarea, max 1000 chars).
 - [ ] CSM can only edit/delete interventions they created. Managers and Admins can edit any.
+<<<<<<< HEAD
 - [ ] Kanban board columns: Planned | In Progress | Completed | Cancelled. Drag-and-drop to change status (stretch; fallback: dropdown).
+=======
+- [ ] Kanban board columns: Planned | In Progress | Completed | Cancelled. Status changed via **dropdown per card** (no drag-and-drop in v1).
+>>>>>>> d00f16b77baffc4fa413b8377e669040148e4d08
 
 ### AC: MGR-4 — CSM Leaderboard
 
@@ -355,12 +361,148 @@ interface ScoreWeightConfig {
 
 ## 5. Affected Files
 
+<<<<<<< HEAD
 Identical structure mapped to root directory: `d:/Sem5/ChurnBhau`.
+=======
+```
+d:/Sem5/ChurnRadar/
+│
+├── prisma/
+│   ├── schema.prisma                          [NEW] All 8 models
+│   └── seed.ts                                [NEW] 50 customers, 6-mo usage logs, interventions
+│
+├── src/
+│   ├── auth.ts                                [NEW] NextAuth v5 config (Credentials provider, Prisma adapter)
+│   ├── middleware.ts                          [NEW] Route protection + role guards
+│   │
+│   ├── app/
+│   │   ├── layout.tsx                         [NEW] Root layout, font, dark mode class
+│   │   ├── globals.css                        [NEW] Tailwind base + custom CSS vars
+│   │   │
+│   │   ├── (auth)/
+│   │   │   ├── login/page.tsx                 [NEW] Login form
+│   │   │   ├── register/page.tsx              [NEW] Register form
+│   │   │   └── verify-email/page.tsx          [NEW] Token verification handler
+│   │   │
+│   │   ├── (dashboard)/
+│   │   │   ├── layout.tsx                     [NEW] Sidebar + header shell
+│   │   │   ├── dashboard/page.tsx             [NEW] KPI cards + 4 charts
+│   │   │   │
+│   │   │   ├── customers/
+│   │   │   │   ├── page.tsx                   [NEW] Customer list with search/filter/sort
+│   │   │   │   ├── new/page.tsx               [NEW] Create customer form
+│   │   │   │   └── [id]/
+│   │   │   │       ├── page.tsx               [NEW] Customer profile
+│   │   │   │       └── edit/page.tsx          [NEW] Edit customer form
+│   │   │   │
+│   │   │   ├── usage/
+│   │   │   │   ├── page.tsx                   [NEW] Usage log list
+│   │   │   │   └── new/page.tsx               [NEW] Log usage form
+│   │   │   │
+│   │   │   ├── interventions/
+│   │   │   │   ├── page.tsx                   [NEW] Kanban board / list view
+│   │   │   │   └── [id]/page.tsx              [NEW] Intervention detail
+│   │   │   │
+│   │   │   ├── analytics/page.tsx             [NEW] Full analytics dashboard
+│   │   │   │
+│   │   │   ├── settings/
+│   │   │   │   └── page.tsx                   [NEW] Profile + password settings
+│   │   │   │
+│   │   │   └── admin/
+│   │   │       ├── page.tsx                   [NEW] System stats + user management
+│   │   │       ├── users/page.tsx             [NEW] User list + invite
+│   │   │       ├── audit/page.tsx             [NEW] Audit log viewer
+│   │   │       └── score-config/page.tsx      [NEW] Score weight sliders
+│   │   │
+│   │   └── api/
+│   │       ├── auth/[...nextauth]/route.ts    [NEW] NextAuth handler
+│   │       ├── customers/
+│   │       │   ├── route.ts                   [NEW] GET list, POST create
+│   │       │   └── [id]/route.ts              [NEW] GET one, PATCH, DELETE
+│   │       ├── usage/
+│   │       │   ├── route.ts                   [NEW] GET list, POST create
+│   │       │   └── [id]/route.ts              [NEW] GET one, PATCH, DELETE
+│   │       ├── interventions/
+│   │       │   ├── route.ts                   [NEW] GET list, POST create
+│   │       │   └── [id]/route.ts              [NEW] GET one, PATCH, DELETE
+│   │       ├── users/
+│   │       │   ├── route.ts                   [NEW] GET list (Admin), POST invite
+│   │       │   └── [id]/route.ts              [NEW] PATCH (role/status), DELETE
+│   │       ├── notifications/route.ts         [NEW] GET, PATCH read
+│   │       ├── analytics/route.ts             [NEW] Aggregated analytics queries
+│   │       └── auth/
+│   │           ├── send-verification/route.ts [NEW] Resend verification email
+│   │           └── forgot-password/route.ts   [NEW] Password reset flow
+│   │
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Sidebar.tsx                    [NEW] Collapsible nav
+│   │   │   ├── Header.tsx                     [NEW] Search, notifications, avatar
+│   │   │   └── MobileNav.tsx                  [NEW] Drawer for mobile
+│   │   │
+│   │   ├── dashboard/
+│   │   │   ├── KpiCard.tsx                    [NEW] Animated KPI stat card
+│   │   │   ├── RiskDonutChart.tsx             [NEW] Recharts PieChart
+│   │   │   ├── ChurnTrendChart.tsx            [NEW] Recharts AreaChart
+│   │   │   └── HealthBarChart.tsx             [NEW] Recharts BarChart
+│   │   │
+│   │   ├── customers/
+│   │   │   ├── CustomerTable.tsx              [NEW] Sortable, paginated table
+│   │   │   ├── CustomerForm.tsx               [NEW] Create/edit form (Zod + RHF)
+│   │   │   ├── RiskBadge.tsx                  [NEW] Coloured badge by risk tier
+│   │   │   ├── HealthGauge.tsx                [NEW] SVG radial gauge
+│   │   │   └── UsageTrendChart.tsx            [NEW] 90-day line chart
+│   │   │
+│   │   ├── interventions/
+│   │   │   ├── InterventionCard.tsx           [NEW] Kanban card
+│   │   │   ├── InterventionForm.tsx           [NEW] Create/edit form
+│   │   │   └── KanbanBoard.tsx                [NEW] Column layout
+│   │   │
+│   │   ├── admin/
+│   │   │   ├── UserTable.tsx                  [NEW] User management table
+│   │   │   ├── InviteModal.tsx                [NEW] Invite user dialog
+│   │   │   └── ScoreWeightForm.tsx            [NEW] Weight sliders
+│   │   │
+│   │   └── ui/                                [NEW] shadcn/ui generated components
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── dialog.tsx
+│   │       ├── input.tsx
+│   │       ├── select.tsx
+│   │       ├── badge.tsx
+│   │       ├── table.tsx
+│   │       ├── toast.tsx (sonner)
+│   │       └── ... (others via `npx shadcn add`)
+│   │
+│   └── lib/
+│       ├── db.ts                              [NEW] Prisma client singleton
+│       ├── auth-utils.ts                      [NEW] Session helpers, role checks
+│       ├── churn-score.ts                     [NEW] Scoring algorithm + risk tier logic
+│       ├── email.ts                           [NEW] Resend helpers (verification, invite, reset)
+│       ├── audit.ts                           [NEW] auditLog() helper used in all mutations
+│       ├── notifications.ts                   [NEW] createNotification() helper
+│       ├── csv-export.ts                      [NEW] CSV builder for customer export
+│       └── validations/
+│           ├── customer.ts                    [NEW] Zod schema for Customer
+│           ├── usage-log.ts                   [NEW] Zod schema for UsageLog
+│           ├── intervention.ts                [NEW] Zod schema for Intervention
+│           └── user.ts                        [NEW] Zod schema for User/Invite
+│
+├── .env.local                                 [NEW] All secrets (never committed)
+├── .env.example                               [NEW] Template with key names only
+├── next.config.ts                             [NEW]
+├── tailwind.config.ts                         [NEW]
+├── tsconfig.json                              [NEW] strict mode
+├── components.json                            [NEW] shadcn config
+└── package.json                               [NEW]
+```
+>>>>>>> d00f16b77baffc4fa413b8377e669040148e4d08
 
 ---
 
 ## 6. Edge Cases
 
+<<<<<<< HEAD
 Refer to original product plan.
 
 ---
@@ -377,3 +519,81 @@ Refer to original product plan.
 8. **OQ8 — Real-time notifications**: Polling every 30s.
 9. **OQ9 — Churn score recalculation timing**: Synchronously in same API call.
 10. **OQ10 — Seed data demo users**: admin@churnradar.com / Demo1234!
+=======
+### Authentication & Session
+
+| # | Scenario | Expected Behaviour |
+|---|---|---|
+| E1 | User registers with an email that already exists | 409: "An account with this email already exists." No second record created. |
+| E2 | Verification token is expired (> 24 h) | Show "Link expired" page with resend option. Old token deleted on use attempt. |
+| E3 | Verification token is used twice | 404/410 "Invalid or already used link." |
+| E4 | Deactivated user tries to log in | 401 with specific message; session not created. |
+| E5 | Session expires while user is on a page | Middleware redirects to `/login?callbackUrl=…`; after re-login, redirect back. |
+| E6 | Admin deactivates themselves | Blocked: API returns 400 "You cannot deactivate your own account." |
+
+### Customer & Data Integrity
+
+| # | Scenario | Expected Behaviour |
+|---|---|---|
+| E7 | Two usage logs submitted for the same customer + date | Second write returns 409. UI shows "A log for [date] already exists. Edit it instead." |
+| E8 | Customer has zero usage logs | Health score = 50, risk = HIGH, gauge shows "No data — defaulted to 50". |
+| E9 | Contract end date is in the past | Customer card shows "Contract expired" badge in red. Scoring proxmity component scores 0. |
+| E10 | Customer is soft-deleted | Filtered from all list queries. Detail route returns 404. Existing interventions/logs retained in DB. |
+| E11 | CSM assigned to a customer is deactivated | Customer still exists; `assignedCsmId` retained. Flagged in admin UI as "Unassigned (CSM inactive)". |
+| E12 | MRR is 0 | Allowed (FREE tier). "MRR at Risk" panel excludes these. |
+| E13 | `contractEnd` is null (month-to-month) | Proximity component scores 75 (neutral). Displayed as "Month-to-month". |
+
+### Role-Based Access Control
+
+| # | Scenario | Expected Behaviour |
+|---|---|---|
+| E14 | CSM navigates to `/admin` | Middleware returns 403 page: "You don't have permission to view this page." |
+| E15 | CSM attempts to edit a customer not assigned to them via direct API call | API checks `assignedCsmId === session.userId` (unless Manager/Admin); returns 403. |
+| E16 | CSM tries to delete an intervention created by another CSM | API returns 403. |
+| E17 | Manager tries to change a user's role via API | API checks `role === ADMIN`; returns 403. |
+| E18 | Non-admin accesses `/api/users` (user management) | Returns 403. |
+
+### Scoring & Analytics
+
+| # | Scenario | Expected Behaviour |
+|---|---|---|
+| E19 | Score weight config is corrupted (weights don't sum to 1) | Fallback to default weights; log a server error. |
+| E20 | Customer has usage logs but all zeros (login = 0, active = 0) | All sub-scores except contract proximity = 0; total score very low → CRITICAL. |
+| E21 | Recharts receives empty data array | Charts render an empty-state illustration, not a broken SVG. |
+| E22 | Analytics query over 6+ months with no data in a month | Gap-filled with zeroes so chart line is continuous. |
+
+### Forms & Validation
+
+| # | Scenario | Expected Behaviour |
+|---|---|---|
+| E23 | User submits Create Customer with `contractEnd < contractStart` | Zod refinement error: "Contract end must be after contract start." |
+| E24 | Intervention set to COMPLETED without an outcome | Zod refinement: "Outcome is required when status is Completed." |
+| E25 | Score weights slider leaves total ≠ 100 | Save button disabled; running total shown in red: "93 / 100". |
+| E26 | Invite email bounces (Resend webhook) | v1: not handled. User remains "Pending". Noted as future work. |
+| E27 | CSV export with 10,000+ customers | Streamed response with `Content-Disposition: attachment`. No timeout. |
+
+---
+
+## 7. Decisions (Open Questions — Answered)
+
+| # | Question | Decision |
+|---|---|---|
+| OQ1 | Email provider | **Resend** free tier (3 k emails/month). `RESEND_API_KEY` stored in `.env.local` only — never committed. |
+| OQ2 | Supabase project | **Existing project** supplied. `DATABASE_URL` and `DIRECT_URL` stored in `.env.local`. Project URL: `https://dqklcdcwmdkejkoginin.supabase.co`. |
+| OQ3 | NextAuth secret | **Supplied by user.** Stored in `.env.local` as `AUTH_SECRET`. Placeholder added to `.env.example`. |
+| OQ4 | Kanban drag-and-drop | **Simple status dropdown per card.** No `@dnd-kit` in v1. |
+| OQ5 | Avatar upload | **URL input only.** User pastes an external image link. No Supabase Storage in v1. |
+| OQ6 | Password reset | **Full email flow.** Resend sends a token link → `/reset-password` page. |
+| OQ7 | Mobile responsiveness | **Fully responsive** with Tailwind breakpoints (mobile-first). |
+| OQ8 | Real-time notifications | **Polling every 30 s** via `setInterval` + SWR/fetch. No Supabase Realtime in v1. |
+| OQ9 | Churn score recalculation | **Synchronous** in the same API call that saves the usage log. |
+| OQ10 | Seed demo credentials | **Yes.** Demo admin: `admin@churnradar.com / Demo1234!` — documented in README. |
+
+> [!CAUTION]
+> `RESEND_API_KEY`, `DATABASE_URL`, `DIRECT_URL`, and `AUTH_SECRET` are **never committed to git**.
+> They live exclusively in `.env.local` (git-ignored). Only `.env.example` (with placeholder values) is committed.
+
+---
+
+*Plan approved. Implementation in progress.*
+>>>>>>> d00f16b77baffc4fa413b8377e669040148e4d08
